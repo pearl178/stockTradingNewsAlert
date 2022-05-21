@@ -1,5 +1,4 @@
 import requests
-import datetime as dt
 from twilio.rest import Client
 
 STOCK
@@ -9,12 +8,6 @@ news_api_key
 account_sid
 auth_token
 
-
-
-date_yesterday = str(dt.datetime.now().year)+'-'+f"{dt.datetime.now().month:02}"+'-'+f"{dt.datetime.now().day:02}"
-date_before_yesterday = str(dt.datetime.now().year)+'-'+f"{dt.datetime.now().month:02}"+'-'+f"{(dt.datetime.now().day-1):02}"
-print(date_yesterday)
-print(date_before_yesterday)
 
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME.
@@ -52,10 +45,13 @@ stock_parameters = {
     'apikey': stock_api_key,
 }
 stock_data = requests.get(url='https://www.alphavantage.co/query', params=stock_parameters)
-price_yesterday = float(stock_data.json()['Time Series (Daily)'][date_yesterday]['4. close'])
+data = stock_data.json()['Time Series (Daily)']
+data_list = [value for (key, value) in data.items()]
+price_yesterday = float(data_list[0]['4. close'])
 print(price_yesterday)
-price_before_yesterday = float(stock_data.json()['Time Series (Daily)'][date_before_yesterday]['4. close'])
+price_before_yesterday = float(data_list[1]['4. close'])
 print(price_before_yesterday)
+change_price = abs(price_yesterday-price_before_yesterday)
 change_price = abs(price_yesterday-price_before_yesterday)
 if price_yesterday>price_before_yesterday:
     change_message = f"🔺{round((change_price/price_before_yesterday)*100)}%"
